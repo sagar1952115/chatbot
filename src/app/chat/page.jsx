@@ -1,43 +1,54 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
-import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import Image from "next/image";
-// import CodeBlock from "../components/CodeBlock";
-import CodeBlock from "./components/CodeBlock";
+import CodeBlock from "../components/CodeBlock";
+import Markdown from "react-markdown";
+import { markdownContent } from "@/data";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/hljs";
-import { formatTimestamp } from "@/util/date";
-import WelcomComponent from "./components/WelcomComponent";
-import { markDownManager } from "@/util/mardownHandler";
 
 const Page = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [message, setMessage] = useState("");
   const textareaRef = useRef(null);
   const [chats, setChats] = useState([]);
   const [activeChatId, setActiveChatId] = useState(null);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
 
+  const codeResponse = `#include <iostream>\n#include <string>\nusing namespace std;\n\nbool isPalindrome(const string& str) {\n  int left = 0;\n  int right = str.length() - 1;\n  while (left < right) {\n    if (str[left] != str[right]) {\n      return false;\n    }\n    left++;\n    right--;\n  }\n  return true;\n}`;
+
+  const markdownResponse = `
+    # React Markdown Example
+    
+    - Some text
+    - Some other text
+    
+    ## Subtitle
+    
+    ### Additional info
+    
+    This is a [link](https://github.com/remarkjs/react-markdown)
+    `;
+
   const isCode = (text) =>
     text.toLowerCase().includes("code") || text.includes("```");
 
   const sendMessage = () => {
     if (!input.trim()) return;
-    handleChatStart(input);
-  };
 
-  const handleChatStart = (input) => {
     const userMessage = {
       text: input,
       sender: "user",
-      type: "markdown",
-      timestamp: Date.now()
+      type: "markdown"
     };
+
+    // Add the user message to the active chat
     setChats((prevChats) => {
       const newChats = prevChats.map((chat) => {
         if (chat.id === activeChatId) {
@@ -57,7 +68,7 @@ const Page = () => {
     setInput("");
     setTyping(true);
 
-    const responseText = markDownManager(input);
+    const responseText = isCode(input) ? codeResponse : markdownContent;
     let index = 0;
     let currentText = "";
 
@@ -72,8 +83,7 @@ const Page = () => {
               {
                 text: "",
                 sender: "bot",
-                type: isCode(input) ? "code" : "markdown",
-                timestamp: Date.now()
+                type: isCode(input) ? "code" : "markdown"
               }
             ]
           };
@@ -99,8 +109,7 @@ const Page = () => {
                   {
                     text: currentText,
                     sender: "bot",
-                    type: isCode(input) ? "code" : "markdown",
-                    timestamp: Date.now()
+                    type: isCode(input) ? "code" : "markdown"
                   }
                 ]
               };
@@ -142,18 +151,9 @@ const Page = () => {
     switchChat(newChat.id);
   };
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [activeChatId]);
-
   const switchChat = (chatId) => {
     setActiveChatId(chatId);
     sessionStorage.setItem("activeChat", chatId);
-    if (isMobile) {
-      setSidebarOpen(false);
-    }
   };
 
   const getChatTitle = (chat) => {
@@ -166,7 +166,6 @@ const Page = () => {
     // Load chats from localStorage when the component mounts
     const savedChats = localStorage.getItem("chats");
     const activeChat = sessionStorage.getItem("activeChat");
-    console.log(savedChats);
     console.log(activeChatId);
     if (savedChats) {
       const parsedChats = JSON.parse(savedChats);
@@ -196,22 +195,18 @@ const Page = () => {
   const handleResize = () => {
     if (window.innerWidth < 1024) {
       // Mobile or smaller screen size
-      setIsMobile(true);
       setSidebarOpen(false);
     } else {
       // Desktop or larger screen size
-      setIsMobile(false);
       setSidebarOpen(true);
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     handleResize(); // Set initial state based on current window size
     window.addEventListener("resize", handleResize); // Add resize event listener
     return () => window.removeEventListener("resize", handleResize); // Cleanup on unmount
   }, []);
-
-  const activeChat = chats?.find((chat) => chat.id == activeChatId);
 
   return (
     <div className="flex">
@@ -225,33 +220,28 @@ const Page = () => {
         createNewChat={createNewChat}
       />
       <div className=" flex flex-col h-screen overflow-auto  flex-1">
-        <Navbar
-          sidebarOpen={sidebarOpen}
-          startNewChat={createNewChat}
-          setSidebarOpen={setSidebarOpen}
-        />
+        <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
+        {/* Content Section */}
         <div className="flex flex-col h-full overflow-hidden ">
-          <div className="flex-1 overflow-auto h-full  lg:p-0 ">
-            <div className="max-w-4xl mx-auto p-3 h-full">
-              <div className="space-y-4 h-full">
-                {activeChat?.messages?.length ? (
-                  activeChat?.messages?.map((msg, index) => (
+          {/* Scrollable content */}
+          <div className="flex-1 overflow-auto  p-5 lg:p-0 ">
+            {/* Your dynamic content here */}
+            <div className="max-w-4xl mx-auto p-3">
+              <div className="space-y-4">
+                {chats
+                  .find((chat) => chat.id == activeChatId)
+                  ?.messages.map((msg, index) => (
                     <div
                       key={index}
-                      className={`p-3 rounded-lg ${
+                      className={`p-3  rounded-lg ${
                         msg.sender === "user"
                           ? "bg-gray-200 max-w-xs text-white self-end ml-auto"
                           : "bg-white text-gray-900 self-start"
                       }`}
                     >
                       {msg.type === "code" ? (
-                        <div className="bg-gray-200 p-3 rounded-xl">
-                          <CodeBlock code={msg.text} language="cpp" />
-                          <p className="text-right text-xs">
-                            {formatTimestamp(msg.timestamp)}
-                          </p>
-                        </div>
+                        <CodeBlock code={msg.text} language="cpp" />
                       ) : (
                         <div className="prose">
                           <ReactMarkdown
@@ -276,30 +266,22 @@ const Page = () => {
                                 );
                               }
                             }}
-                            remarkPlugins={[remarkGfm]}
+                            remarkPlugins={[[remarkGfm]]}
                             rehypePlugins={[rehypeRaw]}
                           >
                             {msg.text}
                           </ReactMarkdown>
-                          <p className="text-right text-xs">
-                            {formatTimestamp(msg.timestamp)}
-                          </p>
                         </div>
                       )}
                     </div>
-                  ))
-                ) : (
-                  <div className="flex h-full items-center justify-center flex-1">
-                    <WelcomComponent handleChatStart={handleChatStart} />
-                  </div>
-                )}
+                  ))}
               </div>
             </div>
           </div>
 
           {/* Input stays at the bottom */}
-          <div className=" max-w-4xl p-5  bg-white lg:py-8 mx-auto bg-white w-full sticky bottom-0">
-            <div className=" bg-gray-100 border  rounded-lg p-2 flex items-center  shadow-md">
+          <div className=" max-w-4xl  bg-white lg:py-8 mx-auto bg-white w-full sticky bottom-0">
+            <div className=" bg-gray-100  rounded-lg p-2 flex items-center  shadow-md">
               <textarea
                 ref={textareaRef}
                 value={input}
@@ -326,9 +308,6 @@ const Page = () => {
                 )}
               </button>
             </div>
-            <p className="text-xs text-center text-gray-400 mt-3">
-              This app is developed by <strong>Sagar Kumar</strong>
-            </p>
           </div>
         </div>
       </div>

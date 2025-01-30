@@ -2,20 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.prose th,
+.prose td {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.prose th {
+  background-color: #f4f4f4;
+}
+
+
+.hide-scrollbar {
+  overflow: hidden; /* Hide scrollbar */
+}
+
+.scrollable {
+  overflow: auto; /* Allow scrolling */
+}
+
+/* This hides the scrollbar but still allows the div to be scrollable */
+.scrollable.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar for webkit browsers */
+}
+
+.scrollable.hide-scrollbar {
+  -ms-overflow-style: none;  /* Hides scrollbar for IE and Edge */
+  scrollbar-width: none;  /* Hides scrollbar for Firefox */
 }
