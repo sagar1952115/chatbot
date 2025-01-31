@@ -2,7 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const Navbar = ({ sidebarOpen, startNewChat,setSidebarOpen, show = true, name = "" }) => {
+const Navbar = ({
+  sidebarOpen,
+  startNewChat,
+  setSidebarOpen,
+  show = true,
+  name = ""
+}) => {
   return (
     <div className="h-20 p-5 flex items-center justify-between ">
       <div>
@@ -28,9 +34,10 @@ const Navbar = ({ sidebarOpen, startNewChat,setSidebarOpen, show = true, name = 
       <div className="flex gap-3 items-center">
         {show && (
           <Link
-            className="bg-gray-200 cursor-pointer p-3 rounded-md"
+            className="bg-gray-200 flex items-center gap-2 cursor-pointer p-3 rounded-md"
             href="/analytics"
           >
+            <p className="hidden lg:flex font-medium">Anlaytics</p>
             <Image
               alt=""
               className=""
@@ -54,10 +61,8 @@ const Navbar = ({ sidebarOpen, startNewChat,setSidebarOpen, show = true, name = 
             />
           </div>
         ) : (
-          <Link
-            href="/"
-            className="bg-gray-200 cursor-pointer lg:hidden p-3 rounded-md"
-          >
+          <Link href="/" className="bg-gray-200 flex items-center gap-2 cursor-pointer p-3 rounded-md">
+            <p className="hidden lg:flex font-medium">Chat</p>
             <Image
               alt=""
               className=""

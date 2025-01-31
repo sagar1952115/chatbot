@@ -14,6 +14,8 @@ import {
 } from "recharts";
 import GaugeChart from "react-gauge-chart"; // ✅ Correct import
 import Navbar from "../components/Navbar";
+import Image from "next/image";
+import EmployeeTable from "../components/Employee";
 
 const AnalyticsPage = () => {
   const [tab, setTab] = useState("charts");
@@ -55,9 +57,9 @@ const AnalyticsPage = () => {
   };
 
   return (
-    <div className="min-h-screen  flex flex-col">
+    <div className="h-screen  overflow-auto border flex flex-col">
       <Navbar name="Chat Analytics" show={false} />
-      <div className="p-6 flex-1  bg-gray-100 flex flex-col h-full">
+      <div className="p-6 flex-1   overflow-auto flex flex-col h-full">
         <div className="flex lg:justify-center mb-6">
           <button
             className={` px-6 p-2 text-lg font-medium ${
@@ -80,7 +82,7 @@ const AnalyticsPage = () => {
         {tab === "charts" ? (
           <div className="grid w-full max-w-6xl mx-auto grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mt-6">
             {/* Line Chart */}
-            <div className="bg-white shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
+            <div className="bg-white border shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
               <ResponsiveContainer width="100%" height={200}>
                 <LineChart data={data}>
                   <XAxis dataKey="id" />
@@ -92,7 +94,7 @@ const AnalyticsPage = () => {
             </div>
 
             {/* Scatter Chart */}
-            <div className="bg-white shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
+            <div className="bg-white border shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
               <ResponsiveContainer width="100%" height={200}>
                 <ScatterChart>
                   <XAxis type="number" dataKey="id" />
@@ -104,7 +106,7 @@ const AnalyticsPage = () => {
             </div>
 
             {/* Radial Bar Chart */}
-            <div className="bg-white shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
+            <div className="bg-white border shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
               <ResponsiveContainer width="100%" height={200}>
                 <RadialBarChart innerRadius="10%" outerRadius="80%" data={data}>
                   <RadialBar
@@ -120,26 +122,12 @@ const AnalyticsPage = () => {
             </div>
 
             {/* Gauge Chart */}
-            <div className="bg-white shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
-              <GaugeChart id="gauge-chart" nrOfLevels={10} percent={0.6} />
+            <div className="bg-white border  shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
+              <GaugeChart textColor="#757573  " id="gauge-chart" nrOfLevels={10} percent={0.6} />
             </div>
           </div>
         ) : (
-          <div
-            onScroll={handleScroll}
-            className=" w-full overflow-auto scrollable hide-scrollbar  h-[560px] max-w-6xl mx-auto   mt-6 bg-white shadow-lg rounded-lg p-4"
-          >
-            {data.map((item) => (
-              <div key={item.id} className="p-2 border-b text-gray-700">
-                {item.value.toFixed(2)}
-              </div>
-            ))}
-            {isLoading && (
-              <div className="p-4 text-center text-gray-600">
-                Loading more...
-              </div>
-            )}
-          </div>
+          <EmployeeTable />
         )}
       </div>
     </div>

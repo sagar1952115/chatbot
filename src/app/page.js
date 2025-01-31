@@ -40,7 +40,7 @@ const Page = () => {
     };
     setChats((prevChats) => {
       const newChats = prevChats.map((chat) => {
-        if (chat.id === activeChatId) {
+        if (chat.id == activeChatId) {
           return {
             ...chat,
             messages: [...chat.messages, userMessage]
@@ -64,7 +64,7 @@ const Page = () => {
     // Add an empty bot message first
     setChats((prevChats) => {
       const newChats = prevChats.map((chat) => {
-        if (chat.id === activeChatId) {
+        if (chat.id == activeChatId) {
           return {
             ...chat,
             messages: [

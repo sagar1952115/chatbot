@@ -1,5 +1,4 @@
 export function formatTimestamp(timestamp) {
-  console.log(timestamp);
   const date = new Date(timestamp);
 
   const day = date.getDate(); // Get the day of the month
