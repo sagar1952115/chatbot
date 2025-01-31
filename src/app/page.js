@@ -7,7 +7,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import Image from "next/image";
-// import CodeBlock from "../components/CodeBlock";
 import CodeBlock from "./components/CodeBlock";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { formatTimestamp } from "@/util/date";
@@ -120,10 +119,6 @@ const Page = () => {
     }, 30);
   };
 
-  // useEffect(() => {
-  //   sessionStorage.setItem("activeChat", activeChatId);
-  // }, [activeChatId]);
-
   const createNewChat = () => {
     const newChat = {
       id: Date.now(),
@@ -134,7 +129,6 @@ const Page = () => {
     // Add the new chat to the chats list
     setChats((prevChats) => {
       const newChats = [...prevChats, newChat];
-      // localStorage.setItem("chats", JSON.stringify(newChats));
       return newChats;
     });
 

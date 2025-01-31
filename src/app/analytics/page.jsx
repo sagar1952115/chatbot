@@ -25,36 +25,6 @@ const AnalyticsPage = () => {
       value: Math.random() * 100
     }))
   );
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Function to load more data
-  const loadMoreData = () => {
-    if (isLoading) return; // Prevent duplicate loads while data is being loaded
-    setIsLoading(true);
-    setTimeout(() => {
-      setData((prev) => [
-        ...prev,
-        ...Array.from({ length: 10 }, (_, i) => ({
-          id: prev.length + i,
-          value: Math.random() * 100
-        }))
-      ]);
-      setIsLoading(false);
-    }, 1000); // Simulate loading delay
-  };
-
-  // Set up scroll event listener to detect when we reach the bottom
-  const handleScroll = (e) => {
-    console.log("Scrolling");
-    if (tab === "charts") {
-      return;
-    }
-    const bottom =
-      e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight;
-    if (bottom) {
-      loadMoreData();
-    }
-  };
 
   return (
     <div className="h-screen  overflow-auto border flex flex-col">
@@ -123,7 +93,12 @@ const AnalyticsPage = () => {
 
             {/* Gauge Chart */}
             <div className="bg-white border  shadow-lg rounded-lg p-4 flex flex-col justify-center items-center h-72">
-              <GaugeChart textColor="#757573  " id="gauge-chart" nrOfLevels={10} percent={0.6} />
+              <GaugeChart
+                textColor="#757573  "
+                id="gauge-chart"
+                nrOfLevels={10}
+                percent={0.6}
+              />
             </div>
           </div>
         ) : (

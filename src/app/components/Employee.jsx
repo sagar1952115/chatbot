@@ -42,11 +42,10 @@ const EmployeeTable = () => {
     };
 
     applyFilters();
-    setCount(10); // Reset count to load the first page of filtered data
+    setCount(10); 
   }, [search, teamFilter, roleFilter]);
 
   useEffect(() => {
-    // Lazy load the filtered data
     setVisibleEmployees(filteredEmployees.slice(0, count));
   }, [filteredEmployees, count]);
 
